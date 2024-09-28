@@ -1,0 +1,63 @@
+# used to install all databases in containers
+
+services:
+  postgres:
+    image: postgres:latest
+    container_name: postgres-db
+    environment:
+      POSTGRES_USER: user #TODO: move to env
+      POSTGRES_PASSWORD: password #TODO: move to env
+      POSTGRES_DB: mydatabase
+    ports:
+      - "5432:5432"
+    networks:
+      - my-network
+    restart: always
+
+  redis:
+    image: redis:latest
+    container_name: redis-db
+    ports:
+      - "6379:6379"
+    networks:
+      - my-network
+    restart: always
+
+  mongo:
+    image: mongo:latest
+    container_name: mongo-db
+    ports:
+      - "27017:27017"
+    networks:
+      - my-network
+    restart: always
+
+  opensearch:
+    image: opensearchproject/opensearch:latest
+    container_name: opensearch-db
+    environment:
+      OPENSEARCH_JAVA_OPTS: "-Xms512m -Xmx512m"
+      discovery.type: single-node
+      OPENSEARCH_INITIAL_ADMIN_PASSWORD: "opensearch" #TODO: move to env
+    ports:
+      - "9200:9200"
+      - "9600:9600"
+    networks:
+      - my-network
+    restart: always
+
+  neo4j:
+    image: neo4j:latest
+    container_name: neo4j-db
+    environment:
+      NEO4J_AUTH: neo4j/password  #TODO: move to env
+    ports:
+      - "7474:7474"  # HTTP
+      - "7687:7687"  # Bolt
+    networks:
+      - my-network
+    restart: always
+
+networks:
+  my-network:
+    driver: bridge

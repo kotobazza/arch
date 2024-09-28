@@ -12,6 +12,9 @@ services:
       - "5432:5432"
     networks:
       - my-network
+    volumes:
+      - ./db_data/pq_data:/var/lib/postgresql/data
+      - ./db_data/pq_logs:/logs:z
     restart: always
 
   redis:
@@ -21,6 +24,8 @@ services:
       - "6379:6379"
     networks:
       - my-network
+    volumes:
+      - ./db_data/r_data:/data
     restart: always
 
   mongo:
@@ -30,6 +35,8 @@ services:
       - "27017:27017"
     networks:
       - my-network
+    volumes:
+      - ./db_data/m_data:/data/db
     restart: always
 
   opensearch:
@@ -38,12 +45,15 @@ services:
     environment:
       OPENSEARCH_JAVA_OPTS: "-Xms512m -Xmx512m"
       discovery.type: single-node
-      OPENSEARCH_INITIAL_ADMIN_PASSWORD: "opensearch" #TODO: move to env
+      OPENSEARCH_INITIAL_ADMIN_PASSWORD: "Opensearch1_" #TODO: move to env
     ports:
       - "9200:9200"
       - "9600:9600"
     networks:
       - my-network
+    volumes:
+      - ./db_data/os_data:/usr/share/opensearch/data
+
     restart: always
 
   neo4j:
@@ -61,3 +71,17 @@ services:
 networks:
   my-network:
     driver: bridge
+
+
+# volumes:
+#   postgres_data:
+#   postgres_logs:
+#   redis_data:
+#   mongo_data:
+#   opensearch_data:
+#   neo4j_data:
+#     driver: local # Define the driver and options under the volume name
+#     driver_opts:
+#       type: none
+#       device: /data/db_data
+#       o: bind

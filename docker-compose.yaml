@@ -14,8 +14,8 @@ services:
     networks:
       - my-network
     volumes:
-      - ./db_data/pq_data:/var/lib/postgresql/data/
-      - ./db_data/pq_logs:/var/log/postgresql  #TODO тоже как и opensearch
+      - ./db_data/pq_data:/var/lib/postgresql/data/ #999:999
+      - ./db_data/pq_logs:/var/log/postgresql #999:999
     restart: always
 
 
@@ -27,8 +27,8 @@ services:
     networks:
       - my-network
     volumes:
-      - ./db_data/r_data:/data
-      - ./db_data/r_logs:/log/
+      - ./db_data/r_data:/data #999:999
+      - ./db_data/r_logs:/log/ #999:999
       - ./db_default/redis:/default_config
     command: redis-server /default_config/redis.conf 
     restart: always
@@ -42,8 +42,8 @@ services:
     networks:
       - my-network
     volumes:
-      - ./db_data/m_data:/data/db
-      - ./db_data/m_logs:/var/log/mongodb #TODO та же самая проблема, что и в opensearch
+      - ./db_data/m_data:/data/db #999:999
+      - ./db_data/m_logs:/var/log/mongodb  #999:999
     command: 
     - '--logpath'
     - '/var/log/mongodb/mongod.log'
@@ -56,33 +56,60 @@ services:
     container_name: opensearch-db
     environment:
       OPENSEARCH_JAVA_OPTS: "-Xms512m -Xmx512m"
+      OPENSEARCH_INITIAL_ADMIN_PASSWORD: "Opensearch1_" 
+      cluster.name: opensearch-cluster
+      node.name: opensearch-db
       discovery.type: single-node
-      OPENSEARCH_INITIAL_ADMIN_PASSWORD: "Opensearch1_" #TODO: move to env
-    
     ports:
       - "9200:9200"
       - "9600:9600"
     networks:
       - my-network
     volumes:
-      - ./db_data/os_logs:/usr/share/opensearch/logs #TODO: нужно менять права извне, как сделать изменение внутри контейнера?
-      - ./db_data/os_data:/usr/share/opensearch/data #TODO: нужно менять права извне
+      - ./db_data/os_logs:/usr/share/opensearch/logs #999:999
+      - ./db_data/os_data:/usr/share/opensearch/data #999:999
     restart: always
+
+  opensearch-dashboards:
+    image: opensearchproject/opensearch-dashboards:2.17.0 
+    container_name: opensearch-dashboards
+    ports:
+      - 5601:5601 
+    expose:
+      - "5601" 
+    environment:
+      OPENSEARCH_HOSTS: '["https://opensearch:9200"]' 
+    networks:
+      - my-network
 
   neo4j:
     image: neo4j:latest
     container_name: neo4j-db
     environment:
-      NEO4J_AUTH: neo4j/password  #TODO: move to env
+      NEO4J_AUTH: neo4j/password  
     ports:
       - "7474:7474"  # HTTP
       - "7687:7687"  # Bolt
     networks:
       - my-network
     volumes:
-      - ./db_data/nj_data:/var/lib/neo4j/data
-      - ./db_data/nj_logs:/var/lib/neo4j/logs
+      - ./db_data/nj_data:/var/lib/neo4j/data #7474:7474
+      - ./db_data/nj_logs:/var/lib/neo4j/logs #7474:7474
     restart: always
+
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: iqumalwer@google.com
+      PGADMIN_DEFAULT_PASSWORD: postgres
+    ports:
+      - "8080:80"
+    networks:
+      - my-network
+    restart: always
+
 
 networks:
   my-network:

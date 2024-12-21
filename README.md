@@ -1,4 +1,6 @@
 # Практические и лабораторные работы по архитектуре сервисов
+Ссылка на Excalidraw https://excalidraw.com/#room=4c2f6f7531bc116ca144,SAKgEwndzG8NF4EabgD1yA
+
 
 ## Используемые базы данных
 + PostgreSQL

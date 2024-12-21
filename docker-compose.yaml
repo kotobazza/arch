@@ -65,9 +65,9 @@ services:
       - "9600:9600"
     networks:
       - my-network
-    # volumes:
-    #   - ./db_data/os_logs:/usr/share/opensearch/logs:z #999:999
-    #   - ./db_data/os_data:/usr/share/opensearch/data:z #999:999
+    volumes:
+      - ./db_data/os_logs:/usr/share/opensearch/logs:z #999:999
+      - ./db_data/os_data:/usr/share/opensearch/data:z #999:999
     restart: always
 
   opensearch-dashboards:
